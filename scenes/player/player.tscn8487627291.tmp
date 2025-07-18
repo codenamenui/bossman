@@ -1,0 +1,46 @@
+[gd_scene load_steps=8 format=3 uid="uid://75u52ctqssvd"]
+
+[ext_resource type="Texture2D" uid="uid://b1phk8lbi2hyj" path="res://assets/player/player.png" id="1_8afob"]
+[ext_resource type="Script" uid="uid://jautfv7fgl10" path="res://scenes/player/player.gd" id="1_dovo2"]
+[ext_resource type="Script" uid="uid://c1224stalkska" path="res://scenes/states/state_machine.gd" id="2_lvxji"]
+[ext_resource type="Script" uid="uid://dp04p2hdls75p" path="res://scenes/states/idle.gd" id="3_75vfm"]
+[ext_resource type="Script" uid="uid://behknrg8ce2ju" path="res://scenes/states/state.gd" id="3_p47bc"]
+[ext_resource type="Script" uid="uid://bxubu2po05tf5" path="res://scenes/states/movement.gd" id="4_75vfm"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dovo2"]
+height = 54.0
+
+[node name="Player" type="CharacterBody2D" groups=["Player"]]
+script = ExtResource("1_dovo2")
+JUMP_VELOCITY = -500.0
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("2_lvxji")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("3_75vfm")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="Movement" type="Node" parent="StateMachine"]
+script = ExtResource("4_75vfm")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="Flying" type="Node" parent="StateMachine"]
+script = ExtResource("3_p47bc")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="Falling" type="Node" parent="StateMachine"]
+script = ExtResource("3_p47bc")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="Attacking" type="Node" parent="StateMachine"]
+script = ExtResource("3_p47bc")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_8afob")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 7)
+shape = SubResource("CapsuleShape2D_dovo2")

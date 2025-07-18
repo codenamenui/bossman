@@ -1,0 +1,77 @@
+[gd_scene load_steps=12 format=3 uid="uid://75u52ctqssvd"]
+
+[ext_resource type="Texture2D" uid="uid://b1phk8lbi2hyj" path="res://assets/player/player.png" id="1_8afob"]
+[ext_resource type="Script" uid="uid://jautfv7fgl10" path="res://scenes/player/player.gd" id="1_dovo2"]
+[ext_resource type="Script" uid="uid://c1224stalkska" path="res://scenes/states/state_machine.gd" id="2_lvxji"]
+[ext_resource type="Script" uid="uid://dp04p2hdls75p" path="res://scenes/states/idle.gd" id="3_75vfm"]
+[ext_resource type="Script" uid="uid://behknrg8ce2ju" path="res://scenes/states/state.gd" id="3_p47bc"]
+[ext_resource type="Script" uid="uid://bxubu2po05tf5" path="res://scenes/states/ground_movement.gd" id="4_75vfm"]
+[ext_resource type="Script" uid="uid://ccpo8wglytqjx" path="res://scenes/states/air_movement.gd" id="5_qek5x"]
+[ext_resource type="Script" uid="uid://u5vlm5137yqs" path="res://scenes/player/trail.gd" id="8_qek5x"]
+
+[sub_resource type="Curve" id="Curve_h17s1"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 1, Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.00001, 0.0, 1, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_qek5x"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qek5x"]
+size = Vector2(32, 32)
+
+[node name="Player" type="CharacterBody2D" groups=["Player"]]
+scale = Vector2(0.5, 0.5)
+collision_mask = 14
+script = ExtResource("1_dovo2")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("2_lvxji")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("3_75vfm")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="GroundMovement" type="Node" parent="StateMachine"]
+script = ExtResource("4_75vfm")
+coyote_time = 0.15
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="AirMovement" type="Node" parent="StateMachine"]
+script = ExtResource("5_qek5x")
+pass_through_time = null
+base_air_timer = 1.0
+jump_acceleration = null
+time_to_peak = 0.5
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="Attacking" type="Node" parent="StateMachine"]
+script = ExtResource("3_p47bc")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_8afob")
+
+[node name="ColorRect" type="ColorRect" parent="Sprite2D"]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+
+[node name="Trail" type="Line2D" parent="."]
+top_level = true
+z_index = -5
+width_curve = SubResource("Curve_h17s1")
+gradient = SubResource("Gradient_qek5x")
+joint_mode = 2
+begin_cap_mode = 2
+antialiased = true
+script = ExtResource("8_qek5x")
+MAX_LENGTH = 15
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_qek5x")
+
+[node name="nearGroundRay" type="RayCast2D" parent="."]
+position = Vector2(0, 16)
+target_position = Vector2(0, 5)
+collision_mask = 6

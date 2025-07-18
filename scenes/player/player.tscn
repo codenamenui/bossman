@@ -1,0 +1,215 @@
+[gd_scene load_steps=22 format=3 uid="uid://75u52ctqssvd"]
+
+[ext_resource type="Texture2D" uid="uid://b1phk8lbi2hyj" path="res://assets/player/player.png" id="1_8afob"]
+[ext_resource type="Script" uid="uid://jautfv7fgl10" path="res://scenes/player/player.gd" id="1_dovo2"]
+[ext_resource type="Script" uid="uid://c1224stalkska" path="res://scenes/states/state_machine.gd" id="2_lvxji"]
+[ext_resource type="Script" uid="uid://dp04p2hdls75p" path="res://scenes/states/idle.gd" id="3_75vfm"]
+[ext_resource type="Script" uid="uid://behknrg8ce2ju" path="res://scenes/states/state.gd" id="3_p47bc"]
+[ext_resource type="Script" uid="uid://bxubu2po05tf5" path="res://scenes/states/ground_movement.gd" id="4_75vfm"]
+[ext_resource type="Script" uid="uid://ccpo8wglytqjx" path="res://scenes/states/air_movement.gd" id="5_qek5x"]
+[ext_resource type="Texture2D" uid="uid://b20epcm2ujmie" path="res://assets/player/wings.png" id="7_5gtgg"]
+[ext_resource type="Script" uid="uid://u5vlm5137yqs" path="res://scenes/player/trail.gd" id="8_qek5x"]
+
+[sub_resource type="Curve" id="Curve_qek5x"]
+_data = [Vector2(0, 0.2), 0.0, 0.0, 0, 0, Vector2(0.5, 0.3), 0.0, 0.0, 0, 0, Vector2(0.75, 0.3), 0.0, 0.0, 0, 0, Vector2(1, 0.2), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_5gtgg"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.0972763), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_fcs02"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h17s1"]
+atlas = ExtResource("7_5gtgg")
+region = Rect2(0, 0, 48, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_je7p5"]
+atlas = ExtResource("7_5gtgg")
+region = Rect2(48, 0, 48, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fm80t"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h17s1")
+}],
+"loop": true,
+"name": &"falling",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h17s1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_je7p5")
+}],
+"loop": true,
+"name": &"flapping",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_je7p5")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="Curve" id="Curve_h17s1"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 1, Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.00001, 0.0, 1, 0]
+point_count = 3
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qek5x"]
+size = Vector2(16, 16)
+
+[sub_resource type="Curve" id="Curve_je7p5"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.792969, 0.610895), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_5gtgg"]
+colors = PackedColorArray(1, 0, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="Curve" id="Curve_fm80t"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_h17s1"]
+offsets = PackedFloat32Array(0, 0.36036, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="Player" type="CharacterBody2D" groups=["Player"]]
+z_index = 1
+collision_mask = 14
+script = ExtResource("1_dovo2")
+accel_rate = 3000
+b_accel_curve = SubResource("Curve_qek5x")
+b_deccel_curve = SubResource("Curve_5gtgg")
+s_max_speed = 600.0
+s_accel_curve = SubResource("Curve_qek5x")
+s_deccel_curve = SubResource("Curve_5gtgg")
+d_max_speed = 1200.0
+d_max_time = 0.4
+a_h_max_speed = 400.0
+a_h_accel_curve = SubResource("Curve_qek5x")
+a_h_deccel_curve = SubResource("Curve_5gtgg")
+a_v_max_speed = 500.0
+a_v_first_time = 0.5
+a_v_second_time = 2.5
+a_v_accel_curve = SubResource("Curve_fcs02")
+double_tap_time = 0.5
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("2_lvxji")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("3_75vfm")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="GroundMovement" type="Node" parent="StateMachine"]
+script = ExtResource("4_75vfm")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="AirMovement" type="Node" parent="StateMachine"]
+script = ExtResource("5_qek5x")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="Attacking" type="Node" parent="StateMachine"]
+script = ExtResource("3_p47bc")
+metadata/_custom_type_script = "uid://behknrg8ce2ju"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_fm80t")
+animation = &"falling"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, 2.38419e-07)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_8afob")
+
+[node name="ColorRect" type="ColorRect" parent="Sprite2D"]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+
+[node name="Trail" type="Line2D" parent="."]
+visible = false
+top_level = true
+z_index = -5
+points = PackedVector2Array(1, 18)
+width_curve = SubResource("Curve_h17s1")
+joint_mode = 2
+begin_cap_mode = 2
+antialiased = true
+script = ExtResource("8_qek5x")
+MAX_LENGTH = 15
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_qek5x")
+
+[node name="nearGroundRay" type="RayCast2D" parent="."]
+position = Vector2(0, 8)
+target_position = Vector2(0, 5)
+collision_mask = 6
+
+[node name="ParticleSystems" type="Node2D" parent="."]
+
+[node name="FlyingParticleSystemLeft" type="CPUParticles2D" parent="ParticleSystems"]
+position = Vector2(-19, 10)
+emitting = false
+amount = 15
+lifetime = 0.3
+explosiveness = 0.12
+lifetime_randomness = 0.15
+direction = Vector2(0, 1)
+spread = 75.0
+initial_velocity_min = 97.14
+initial_velocity_max = 110.84
+tangential_accel_max = 100.0
+angle_min = -19.7
+angle_max = 118.3
+scale_amount_max = 10.0
+scale_amount_curve = SubResource("Curve_je7p5")
+color_ramp = SubResource("Gradient_5gtgg")
+
+[node name="FlyingParticleSystemRight" type="CPUParticles2D" parent="ParticleSystems"]
+position = Vector2(15, 10)
+emitting = false
+amount = 15
+lifetime = 0.3
+explosiveness = 0.12
+lifetime_randomness = 0.15
+direction = Vector2(0, 1)
+spread = 75.0
+initial_velocity_min = 97.14
+initial_velocity_max = 110.84
+tangential_accel_max = 100.0
+angle_min = 78.9
+angle_max = 138.1
+scale_amount_max = 10.0
+scale_amount_curve = SubResource("Curve_je7p5")
+color_ramp = SubResource("Gradient_5gtgg")
+
+[node name="RunningParticleSystem" type="CPUParticles2D" parent="ParticleSystems"]
+position = Vector2(-7, 9)
+emitting = false
+amount = 20
+lifetime = 0.3
+speed_scale = 2.0
+explosiveness = 0.14
+gravity = Vector2(0, 0)
+initial_velocity_min = 90.0
+initial_velocity_max = 90.0
+linear_accel_max = 45.05
+radial_accel_min = 24.66
+radial_accel_max = 60.27
+tangential_accel_max = 63.01
+scale_amount_max = 5.0
+scale_amount_curve = SubResource("Curve_fm80t")
+color_ramp = SubResource("Gradient_h17s1")
