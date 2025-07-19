@@ -9,9 +9,6 @@ enum JUMP_STATE {ZERO, FIRST_HELD, FIRST_WAIT, SECOND, FALLING}
 # Static Variable
 static var player : Player
 
-# Static Goals
-static var deceleration_goal := 0
-
 # Static Timers
 static var dash_timer := 0.0
 static var dash_effect_timer := 0.0
@@ -23,29 +20,19 @@ static var tapped := TAP_STATE.NONE
 static var dashing := false
 static var turning := false
 static var sprinting := SPRINT_STATE.NOT
+static var jumped := JUMP_STATE.ZERO
 
 # Static Directions
-var current_dir := 0
-var previous_dir := 0
-
-# Static Sample Points
-static var h_point := 0.0
+static var current_dir := 0
+static var previous_dir := 1
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("Player")
 
 func get_direction():
-	if Input.is_action_pressed("left") and Input.is_action_pressed("right"):
-		current_dir = 0
-	elif Input.is_action_pressed("right"):
-		current_dir = 1
-	elif Input.is_action_pressed("left"):
-		current_dir = -1
-	else:
-		current_dir = 0
+	current_dir = Input.get_axis("left", "right")
 	
 	if previous_dir != current_dir:
-		h_point = 0
 		if current_dir != 0:
 			turning = true
 	
@@ -90,12 +77,14 @@ func create_dash_effect():
 	get_parent().get_parent().get_parent().add_child(playerCopyNode)
 	playerCopyNode.global_position = player.global_position
 	playerCopyNode.position.y += -16
+	playerCopyNode.z_index = 1
+	
 	if current_dir == 1:
 		playerCopyNode.flip_h = false
 	else:
 		playerCopyNode.flip_h = true
 		
-	var animation_time = player.d_max_time / 3
+	var animation_time = player.d_accel_time / 3
 	await get_tree().create_timer(animation_time).timeout
 	playerCopyNode.modulate.a = 0.4
 	await get_tree().create_timer(animation_time).timeout
@@ -104,18 +93,41 @@ func create_dash_effect():
 	playerCopyNode.queue_free()
 
 func animate_player():
-	var state : State = player.state_machine.current_state
+	if Input.is_action_pressed("attack"):
+		player.sprite.play("attack")
+		return
+	
+	if player.sprite.animation == "attack":
+		if player.sprite.is_playing():
+			return
+			
 	player.sprite.speed_scale = 1
-	if state is GroundMovementState:
-		if current_dir != 0:
-			if current_dir == 1:
-				player.sprite.flip_h = false
-			else:
-				player.sprite.flip_h = true
-			player.sprite.play("run")
-			if sprinting:
-				player.sprite.speed_scale = 6
+	
+	if current_dir == 1:
+		player.sprite.flip_h = false
+	else:
+		player.sprite.flip_h = true
+
+	if player.sprite.animation == "jump":
+		if player.sprite.is_playing():
+			return
+	
+	if player.sprite.animation == "fall":
+		if not player.is_on_floor():
+			return
+		
+	var state : State = player.state_machine.current_state
+	
+	if state is IdleState:
+		if previous_dir == 1:
+			player.sprite.flip_h = false
 		else:
-			player.sprite.play("idle")
-	elif state is IdleState:
+			player.sprite.flip_h = true
 		player.sprite.play("idle")
+	elif state is GroundMovementState:
+		if current_dir != 0:
+			player.sprite.play("run")
+		player.sprite.speed_scale = lerp(1, 7, player.velocity.x / player.b_max_speed)
+	elif state is AirMovementState:
+		if not player.is_on_floor():
+			player.sprite.play("fall")

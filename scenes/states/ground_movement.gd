@@ -16,7 +16,6 @@ func enter(msg : Dictionary = {}) -> void:
 		player.velocity.x = 0.0001
 	coyote_timer = 0
 	in_coyote = false
-	h_point = 0
 
 func exit() -> void:
 	player.running_particle_system.emitting = false
@@ -42,13 +41,14 @@ func coyote_handling(delta):
 		in_coyote = false
 	elif in_coyote:
 		coyote_timer += delta
-		Helper.accelerate(player, player.gravity, 1, player.max_gravity, delta, true)
+		Helper.accelerate(player, player.gravity, player.max_gravity, 1, delta, true)
 		if coyote_timer >= player.coyote_time:
 			coyote_timer = 0
 			transition_requested.emit("AirMovement")
 	
 func get_vertical_actions():
 	if Input.is_action_just_pressed("jump"):
+		player.sprite.play("fall")
 		transition_requested.emit("AirMovement", {"jump" : true})
 	elif Input.is_action_just_pressed("down"):
 		transition_requested.emit("AirMovement", {"drop": true})
@@ -57,45 +57,34 @@ func move_player(delta):
 	if abs(player.velocity.x) < player.b_max_speed:
 		sprinting = SPRINT_STATE.NOT
 		sprint_timer = 0
-	elif abs(player.velocity.x) >= player.b_max_speed:
-		sprinting = SPRINT_STATE.MAX_SPEED
-		h_point = 0
-		
-	if sprinting == SPRINT_STATE.MAX_SPEED:
-		sprint_timer += delta
-		if sprint_timer >= player.time_to_sprint:
-			sprinting = SPRINT_STATE.SPRINTING
+	elif abs(player.velocity.x) >= player.b_max_speed / 2:
+		sprinting = SPRINT_STATE.SPRINTING
 	
 	if dashing:
 		dash_timer += delta
 		dash_effect_timer += delta
-		if dash_effect_timer >= player.d_max_time / 3:
+		if dash_effect_timer >= player.d_accel_time / 3:
 			create_dash_effect()
 			dash_effect_timer = 0
-		if dash_timer >= player.d_max_time:
+		if dash_timer >= player.d_accel_time:
 			dashing = false
-			player.velocity.x = player.s_max_speed * current_dir
+			player.velocity.x = player.b_max_speed * current_dir
 			sprinting = SPRINT_STATE.SPRINTING
 			dash_timer = 0
 	elif turning and current_dir:
 		turn_timer += delta
 		if turn_timer <= player.turning_boost_time:
-			Helper.accelerate_with_curve(h_point, player, player.b_accel_curve, player.accel_rate * 5, player.b_max_speed, current_dir, delta)
-			h_point = Helper.addSample(h_point, delta, player.b_accel_time)
+			Helper.accelerate(player, player.b_accel_rate * 5, player.b_max_speed, current_dir, delta)
 		else:
 			turn_timer = 0
 			turning = false
 	elif current_dir == 0 and abs(player.velocity.x) <= 100:
 		player.velocity.x = 0
 	elif current_dir == 0:
-		Helper.accelerate_with_curve(h_point, player, player.b_deccel_curve, player.accel_rate, player.b_max_speed, -previous_dir, delta)
-		h_point = Helper.addSample(h_point, delta, player.b_deccel_time)
-	elif current_dir and sprinting == SPRINT_STATE.NOT:
-		Helper.accelerate_with_curve(h_point, player, player.b_accel_curve, player.accel_rate, player.b_max_speed, current_dir, delta)
-		h_point = Helper.addSample(h_point, delta, player.b_accel_time)
-	elif current_dir and sprinting == SPRINT_STATE.SPRINTING:
-		Helper.accelerate_with_curve(h_point, player, player.s_accel_curve, player.accel_rate, player.s_max_speed, current_dir, delta)
-		h_point = Helper.addSample(h_point, delta, player.s_accel_time)
+		var decel_dir = 1 if player.velocity.x <= 0 else -1
+		Helper.accelerate(player, player.b_decel_rate, player.b_max_speed, decel_dir, delta)
+	elif current_dir:
+			Helper.accelerate(player, player.b_accel_rate, player.b_max_speed, current_dir, delta)
 
 func enable_particles():
 	if current_dir == 1 and sprinting != SPRINT_STATE.NOT:
