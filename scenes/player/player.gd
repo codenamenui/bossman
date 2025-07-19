@@ -40,6 +40,7 @@ class_name Player
 @export var pass_through_time := 0.2
 @export var coyote_time := 0.15
 @export var double_tap_time := 0.2
+@export var turning_boost_time := 0.2
 
 # Nodes
 @onready var state_machine : StateMachine = $StateMachine
@@ -50,6 +51,7 @@ class_name Player
 @onready var flying_particle_system_left: CPUParticles2D = $ParticleSystems/FlyingParticleSystemLeft
 @onready var flying_particle_system_right: CPUParticles2D = $ParticleSystems/FlyingParticleSystemRight
 @onready var running_particle_system: CPUParticles2D = $ParticleSystems/RunningParticleSystem
+@onready var sprite_2d: Sprite2D = $Sprite2D
 
 func _ready() -> void:
 	pass

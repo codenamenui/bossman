@@ -7,7 +7,11 @@ var player : Player
 var coyote_timer := 0.0
 var last_tap_timer := 0.0
 var dash_timer := 0.0
-var sprint_time := 0.0
+var dash_effect_timer := 0.0
+var sprint_timer := 0.0
+var turn_timer := 0.0
+
+# Sample Point
 var sample := 0.0
 
 # States
@@ -15,6 +19,7 @@ var in_coyote := false
 var tapped := TAP_STATE.NONE
 var sprinting := SPRINT_STATE.NOT
 var dashing := false
+var turning := false
 
 # Directions
 var current_dir := 0
@@ -61,12 +66,14 @@ func coyote_handling(delta):
 
 func get_direction():
 	current_dir = Input.get_axis("left", "right")
-		
-	if previous_dir != current_dir:
-		player.velocity.x = 0
-		sample = 0
 	
-	previous_dir = current_dir
+	if previous_dir != current_dir:
+		sample = 0
+		if current_dir != 0:
+			turning = true
+	
+	if current_dir != 0:
+		previous_dir = current_dir
 	
 func get_vertical_actions():
 	if Input.is_action_just_pressed("jump"):
@@ -91,12 +98,14 @@ func tap_handling(delta):
 	if Input.is_action_just_pressed("left"):
 		if tapped == TAP_STATE.LEFT_WAITING:
 			dashing = true
+			create_dash_effect()
 			player.velocity.x = -player.d_max_speed
 		else:
 			tapped = TAP_STATE.LEFT_TAP
 	elif Input.is_action_just_pressed("right"):
 		if tapped == TAP_STATE.RIGHT_WAITING:
 			dashing = true
+			create_dash_effect()
 			player.velocity.x = player.d_max_speed
 		else:
 			tapped = TAP_STATE.RIGHT_TAP
@@ -104,28 +113,41 @@ func tap_handling(delta):
 func move_player(delta):
 	if abs(player.velocity.x) < player.b_max_speed:
 		sprinting = SPRINT_STATE.NOT
-		sprint_time = 0
+		sprint_timer = 0
 	elif abs(player.velocity.x) >= player.b_max_speed:
 		sprinting = SPRINT_STATE.MAX_SPEED
 		sample = 0
 		
 	if sprinting == SPRINT_STATE.MAX_SPEED:
-		sprint_time += delta
-		if sprint_time >= player.time_to_sprint:
+		sprint_timer += delta
+		if sprint_timer >= player.time_to_sprint:
 			sprinting = SPRINT_STATE.SPRINTING
 			
 	if dashing:
 		dash_timer += delta
+		dash_effect_timer += delta
+		if dash_effect_timer >= player.d_max_time / 4:
+			create_dash_effect()
+			dash_effect_timer = 0
 		if dash_timer >= player.d_max_time:
 			dashing = false
 			player.velocity.x = player.s_max_speed * current_dir
 			sprinting = SPRINT_STATE.SPRINTING
 			dash_timer = 0
-	elif current_dir == 0 and player.velocity.x == 0:
+	elif turning:
+		turn_timer += delta
+		if turn_timer <= player.turning_boost_time:
+			Helper.accelerate_with_curve(sample, player, player.b_accel_curve, player.accel_rate * 4, player.b_max_speed, current_dir, delta)
+			sample = Helper.addSample(sample, delta, player.b_accel_time)
+		else:
+			turn_timer = 0
+			turning = false
+	elif current_dir == 0 and abs(player.velocity.x) <= 100:
+		player.velocity.x = 0
 		transition_requested.emit("Idle")
 	elif current_dir == 0:
 		Helper.accelerate_with_curve(sample, player, player.b_deccel_curve, player.accel_rate, player.b_max_speed, -previous_dir, delta)
-		sample = Helper.addSample(sample, delta, player.b_accel_time)
+		sample = Helper.addSample(sample, delta, player.b_deccel_time)
 	elif current_dir and sprinting == SPRINT_STATE.NOT:
 		Helper.accelerate_with_curve(sample, player, player.b_accel_curve, player.accel_rate, player.b_max_speed, current_dir, delta)
 		sample = Helper.addSample(sample, delta, player.b_accel_time)
@@ -144,3 +166,16 @@ func enable_particles():
 		player.running_particle_system.position.x = -6.0
 	else:
 		player.running_particle_system.emitting = false
+
+func create_dash_effect():
+	var playerCopyNode = player.sprite.duplicate()
+	player.get_node("Sprite2D").add_child(playerCopyNode)
+	playerCopyNode.global_position = player.get_node("Sprite2D").global_position
+	
+	var animation_time = player.d_max_time / 3
+	await get_tree().create_timer(animation_time).timeout
+	playerCopyNode.modulate.a = 0.4
+	await get_tree().create_timer(animation_time).timeout
+	playerCopyNode.modulate.a = 0.2
+	await get_tree().create_timer(animation_time).timeout
+	playerCopyNode.queue_free()
