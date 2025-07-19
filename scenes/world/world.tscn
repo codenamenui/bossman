@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=4 uid="uid://dvhsbsch2ha4e"]
+[gd_scene load_steps=5 format=4 uid="uid://dvhsbsch2ha4e"]
 
 [ext_resource type="TileSet" uid="uid://xhug121faxwt" path="res://assets/world/world.tres" id="1_dphjl"]
 [ext_resource type="PackedScene" uid="uid://75u52ctqssvd" path="res://scenes/player/player.tscn" id="2_sl2e5"]
 [ext_resource type="Script" uid="uid://tlqoj0n1hfsl" path="res://addons/smartcamera2D/SmartCamera2D.gd" id="3_1fp7r"]
+[ext_resource type="PackedScene" uid="uid://iilujs0lgumx" path="res://scenes/enemy/mage.tscn" id="3_6m72w"]
 
 [node name="World" type="Node2D"]
 
@@ -21,7 +22,10 @@ tile_map_data = PackedByteArray("AAACAA8AAQAAAAQAAAADAA8AAQAAAAQAAAAEAA8AAQAAAAQ
 tile_set = ExtResource("1_dphjl")
 
 [node name="Player" parent="." instance=ExtResource("2_sl2e5")]
-position = Vector2(610, 350)
+position = Vector2(711, 74)
+
+[node name="Mage" parent="." instance=ExtResource("3_6m72w")]
+position = Vector2(193, 592)
 
 [node name="SmartCamera2D" type="Camera2D" parent="."]
 visible = false
@@ -41,8 +45,9 @@ metadata/_custom_type_script = "uid://tlqoj0n1hfsl"
 
 [node name="ColorRect" type="ColorRect" parent="."]
 z_index = -333
-offset_left = -4330.0
-offset_top = -1211.0
-offset_right = 4684.0
-offset_bottom = 2237.0
+offset_left = -3672.0
+offset_top = -449.0
+offset_right = 5342.0
+offset_bottom = 2999.0
 color = Color(0.167245, 0.0286787, 0.312364, 1)
+metadata/_edit_lock_ = true

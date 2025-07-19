@@ -35,6 +35,7 @@ enabled=PackedStringArray("res://addons/smartcamera2D/plugin.cfg")
 [global_group]
 
 Player=""
+Enemy=""
 
 [input]
 

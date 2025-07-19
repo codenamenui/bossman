@@ -93,6 +93,8 @@ func create_dash_effect():
 	playerCopyNode.queue_free()
 
 func animate_player():
+	player.sprite.speed_scale = 1
+	
 	if Input.is_action_pressed("attack"):
 		player.sprite.play("attack")
 		return
@@ -100,8 +102,6 @@ func animate_player():
 	if player.sprite.animation == "attack":
 		if player.sprite.is_playing():
 			return
-			
-	player.sprite.speed_scale = 1
 	
 	if current_dir == 1:
 		player.sprite.flip_h = false

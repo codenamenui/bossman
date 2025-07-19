@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://jautfv7fgl10" path="res://scenes/player/player.gd" id="1_dovo2"]
 [ext_resource type="Script" uid="uid://c1224stalkska" path="res://scenes/states/state_machine.gd" id="2_lvxji"]
-[ext_resource type="Script" uid="uid://dp04p2hdls75p" path="res://scenes/states/idle.gd" id="3_75vfm"]
+[ext_resource type="Script" uid="uid://dp04p2hdls75p" path="res://scenes/states/player/idle.gd" id="3_75vfm"]
 [ext_resource type="Script" uid="uid://behknrg8ce2ju" path="res://scenes/states/state.gd" id="3_p47bc"]
-[ext_resource type="Script" uid="uid://bxubu2po05tf5" path="res://scenes/states/ground_movement.gd" id="4_75vfm"]
-[ext_resource type="Script" uid="uid://ccpo8wglytqjx" path="res://scenes/states/air_movement.gd" id="5_qek5x"]
+[ext_resource type="Script" uid="uid://bxubu2po05tf5" path="res://scenes/states/player/ground_movement.gd" id="4_75vfm"]
+[ext_resource type="Script" uid="uid://ccpo8wglytqjx" path="res://scenes/states/player/air_movement.gd" id="5_qek5x"]
 [ext_resource type="Texture2D" uid="uid://dig5wi2ljfp6k" path="res://assets/player/spritesheet.png" id="8_5gtgg"]
 [ext_resource type="Script" uid="uid://u5vlm5137yqs" path="res://scenes/player/trail.gd" id="8_qek5x"]
 [ext_resource type="Texture2D" uid="uid://we240b8521ra" path="res://assets/world/light.png" id="9_5gtgg"]
@@ -356,7 +356,7 @@ collision_mask = 14
 script = ExtResource("1_dovo2")
 b_max_speed = 700.0
 b_accel_rate = 466.7
-b_accel_time = 2.0
+b_accel_time = 1.5
 b_decel_rate = 3500.0
 d_max_speed = 1400.0
 a_h_max_speed = 700.0
@@ -365,7 +365,7 @@ a_v_first_time = 0.3
 a_v_first_accel_rate = 2222.0
 a_v_second_time = 0.3
 a_v_second_accel_rate = 2222.0
-double_tap_time = 0.5
+double_tap_time = 0.4
 turning_boost_time = 0.06
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
