@@ -44,20 +44,19 @@ class_name Player
 
 # Nodes
 @onready var state_machine : StateMachine = $StateMachine
-@onready var sprite : ColorRect = $Sprite2D/ColorRect
 @onready var ground_ray : RayCast2D = $nearGroundRay
 @onready var trail : Line2D = $Trail
-@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var flying_particle_system_left: CPUParticles2D = $ParticleSystems/FlyingParticleSystemLeft
 @onready var flying_particle_system_right: CPUParticles2D = $ParticleSystems/FlyingParticleSystemRight
 @onready var running_particle_system: CPUParticles2D = $ParticleSystems/RunningParticleSystem
-@onready var sprite_2d: Sprite2D = $Sprite2D
 
 func _ready() -> void:
 	pass
 	
 func _physics_process(delta: float) -> void:
 	state_machine._physics_process(delta)
+	print(state_machine.current_state)
 	move_and_slide()
 
 func _process(delta: float) -> void:
