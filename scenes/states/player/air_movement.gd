@@ -27,6 +27,7 @@ func enter(msg : Dictionary = {}) -> void:
 				passing_through = true
 				
 	if msg.get("jump") == true:
+		player.velocity.y = player.takeoff_velocity
 		jumped = JUMP_STATE.FIRST_HELD
 		
 func exit() -> void:
@@ -60,7 +61,7 @@ func add_gravity(delta):
 	if not player.is_on_floor():
 		if Input.is_action_just_pressed("jump") and jumped == JUMP_STATE.ZERO:
 			player.sprite.play("jump")
-			player.velocity.y = 0
+			player.velocity.y = player.takeoff_velocity
 			jumped = JUMP_STATE.SECOND
 		elif Input.is_action_pressed("jump") and jumped == JUMP_STATE.FALLING and player.velocity.y >= 0 :
 			Helper.accelerate(player, player.gravity / 6, player.max_gravity, 1, delta, true)
@@ -78,31 +79,31 @@ func check_pass_through(delta: float):
 func do_vertical_movement(delta: float):
 	if jumped != JUMP_STATE.ZERO:
 		if Input.is_action_pressed("jump") and jumped == JUMP_STATE.FIRST_HELD:
-			first_jump_timer += delta
-			if first_jump_timer <= player.a_v_first_time:
-				Helper.accelerate(player, player.a_v_first_accel_rate, player.a_v_max_speed, -1, delta, true)
+			if first_jump_timer <= player.takeoff_time:
+				first_jump_timer += delta
 			else:
 				first_jump_timer = 0
 				jumped = JUMP_STATE.FIRST_WAIT
 		elif Input.is_action_just_released("jump") and jumped == JUMP_STATE.FIRST_HELD:
+			player.velocity.y = 0
 			jumped = JUMP_STATE.FIRST_WAIT
 		elif Input.is_action_just_pressed("jump") and jumped == JUMP_STATE.FIRST_WAIT:
 			player.sprite.play("jump")
 			jumped = JUMP_STATE.SECOND
-			player.velocity.y = 0
+			player.velocity.y = player.takeoff_velocity
 		
 		if Input.is_action_just_released("jump") and jumped == JUMP_STATE.SECOND:
 			jumped = JUMP_STATE.FALLING
 		elif jumped == JUMP_STATE.SECOND:
-			if second_jump_timer <= player.a_v_second_time:
+			if second_jump_timer <= player.takeoff_time:
 				second_jump_timer += delta
-				Helper.accelerate(player, player.a_v_second_accel_rate, player.a_v_max_speed, -1, delta, true)
 			else:
 				jumped = JUMP_STATE.FALLING
 				
 	if Input.is_action_just_pressed("jump"):
 		if player.ground_ray.get_collider() and jumped != JUMP_STATE.FIRST_HELD:
 			player.sprite.play("fall")
+			player.velocity.y = player.takeoff_velocity
 			jumped = JUMP_STATE.FIRST_HELD
 		
 func do_horizontal_movement(delta):

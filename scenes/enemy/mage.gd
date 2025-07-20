@@ -13,14 +13,9 @@ enum ATTACKS {NONE, SWING, CAST}
 @export var h_boost_speed := 1300
 @export var h_boost_time := 0.5
 @export var h_boost_rate := 2600
-@export var jump_speed := 100000
-@export var jump_time := 0.2
-@export var jump_accel_rate := 7500
-@export var v_boost_speed := 100000
-@export var v_boost_time := 0.1
-@export var v_boost_rate := 30000
+@export var jump_height := 240
 @export var gravity := 800.0
-@export var max_gravity := 800.0
+@export var max_gravity := 1600.0
 
 @export_category("Chasing Variables")
 @export var x_distance_to_jump := 100

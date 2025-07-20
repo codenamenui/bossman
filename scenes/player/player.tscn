@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://75u52ctqssvd"]
+[gd_scene load_steps=58 format=3 uid="uid://75u52ctqssvd"]
 
 [ext_resource type="Script" uid="uid://jautfv7fgl10" path="res://scenes/player/player.gd" id="1_dovo2"]
 [ext_resource type="Script" uid="uid://c1224stalkska" path="res://scenes/states/state_machine.gd" id="2_lvxji"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dig5wi2ljfp6k" path="res://assets/player/spritesheet.png" id="8_5gtgg"]
 [ext_resource type="Script" uid="uid://u5vlm5137yqs" path="res://scenes/player/trail.gd" id="8_qek5x"]
 [ext_resource type="Texture2D" uid="uid://we240b8521ra" path="res://assets/world/light.png" id="9_5gtgg"]
+[ext_resource type="PackedScene" uid="uid://dta6yp5rqtpys" path="res://scenes/components/health_component.tscn" id="10_h17s1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h17s1"]
 atlas = ExtResource("8_5gtgg")
@@ -360,13 +361,9 @@ b_accel_time = 1.5
 b_decel_rate = 3500.0
 d_max_speed = 1400.0
 a_h_max_speed = 700.0
-a_v_max_speed = 33333.0
-a_v_first_time = 0.3
-a_v_first_accel_rate = 2222.0
-a_v_second_time = 0.3
-a_v_second_accel_rate = 2222.0
-double_tap_time = 0.4
-turning_boost_time = 0.06
+takeoff_velocity = -520.0
+coyote_time = 0.2
+double_tap_time = 0.5
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("2_lvxji")
@@ -391,9 +388,14 @@ metadata/_custom_type_script = "uid://behknrg8ce2ju"
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(3, -16)
 sprite_frames = SubResource("SpriteFrames_fm80t")
-animation = &"attack"
-frame = 6
-frame_progress = 1.0
+animation = &"run"
+frame_progress = 0.139537
+
+[node name="Line2D" type="Line2D" parent="AnimatedSprite2D"]
+position = Vector2(17, -6)
+points = PackedVector2Array(1000, 0, 0, 0)
+width = 1.0
+default_color = Color(1, 0.372549, 0.372549, 1)
 
 [node name="Trail" type="Line2D" parent="."]
 visible = false
@@ -483,3 +485,6 @@ shadow_enabled = true
 shadow_color = Color(0, 0, 0, 1)
 texture = ExtResource("9_5gtgg")
 texture_scale = 0.2
+
+[node name="HealthComponent" parent="." instance=ExtResource("10_h17s1")]
+max_health = 100

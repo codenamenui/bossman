@@ -6,7 +6,6 @@ static var player : Player
 static var enemy : Enemy
 
 # Static States
-static var jumping := false
 static var passing_through := false
 
 func _ready() -> void:

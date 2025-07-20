@@ -189,7 +189,6 @@ func _filter_existing_node(variant) -> bool:
 		return false
 	return true
 
-
 func _validate_property(property: Dictionary):
 	var multiple_properties = [
 		"adjust_zoom", "zoom_margin", "adjust_zoom_margin",

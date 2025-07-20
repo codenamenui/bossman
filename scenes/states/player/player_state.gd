@@ -94,20 +94,35 @@ func create_dash_effect():
 
 func animate_player():
 	player.sprite.speed_scale = 1
+	var state : State = player.state_machine.current_state
 	
 	if Input.is_action_pressed("attack"):
 		player.sprite.play("attack")
-		return
 	
 	if player.sprite.animation == "attack":
+		if state is AirMovementState:
+			player.sprite.flip_h = false
+			player.sprite.look_at(player.get_global_mouse_position())
+		elif state is GroundMovementState or state is IdleState:
+			var direction = player.get_global_mouse_position().x - player.sprite.global_position.x
+			player.sprite.flip_h = direction < 0
+			if state is IdleState:
+				current_dir = direction > 0
+				previous_dir = direction > 0
+			#player.sprite.look_at(player.get_global_mouse_position())
+			#if player.sprite.flip_h:
+				#player.sprite.rotation = clamp(player.sprite.rotation, 0, 90)
+			#else:
+				#player.sprite.rotation = clamp(player.sprite.rotation, -90, 0) * -1
+		player.line_2d.visible = true
 		if player.sprite.is_playing():
 			return
-	
-	if current_dir == 1:
-		player.sprite.flip_h = false
 	else:
-		player.sprite.flip_h = true
-
+		player.sprite.rotation = 0
+		player.line_2d.visible = false
+		
+	player.sprite.flip_h = current_dir != 1
+	
 	if player.sprite.animation == "jump":
 		if player.sprite.is_playing():
 			return
@@ -115,8 +130,6 @@ func animate_player():
 	if player.sprite.animation == "fall":
 		if not player.is_on_floor():
 			return
-		
-	var state : State = player.state_machine.current_state
 	
 	if state is IdleState:
 		if previous_dir == 1:

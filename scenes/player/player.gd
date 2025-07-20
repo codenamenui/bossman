@@ -19,13 +19,15 @@ class_name Player
 @export var a_h_accel_time := 1.0
 @export var a_h_decel_rate := 1000.0
 @export var a_h_decel_time := 0.2
-@export var a_v_max_speed := 500.0
-@export var a_v_first_time := 0.2
-@export var a_v_first_accel_rate := 1000.0
-@export var a_v_second_time := 1.0
-@export var a_v_second_accel_rate := 1000.0
+#@export var a_v_max_speed := 500.0
+#@export var a_v_first_time := 0.2
+#@export var a_v_first_accel_rate := 1000.0
+#@export var a_v_second_time := 1.0
+#@export var a_v_second_accel_rate := 1000.0
+@export var takeoff_velocity := 520.0
+@export var takeoff_time := 0.3
 @export var gravity := 800.0
-@export var max_gravity := 800.0
+@export var max_gravity := 1600.0
 
 @export_category("QOL Variables")
 @export var pass_through_time := 0.2
@@ -41,17 +43,26 @@ class_name Player
 @onready var flying_particle_system_left: CPUParticles2D = $ParticleSystems/FlyingParticleSystemLeft
 @onready var flying_particle_system_right: CPUParticles2D = $ParticleSystems/FlyingParticleSystemRight
 @onready var running_particle_system: CPUParticles2D = $ParticleSystems/RunningParticleSystem
+@onready var line_2d: Line2D = $AnimatedSprite2D/Line2D
+@onready var health_component: HealthComponent = $HealthComponent
 
 func _ready() -> void:
 	sprite.play("idle")
 	
 func _physics_process(delta: float) -> void:
 	state_machine._physics_process(delta)
-	#print(state_machine.current_state)
-	#look_at(get_viewport().get_mouse_position())
 	#if state_machine.current_state is AirMovementState:
-		#look_at(get_viewport().get_mouse_position())
+		#sprite.look_at(get_global_mouse_position())
+		#line_2d.visible = true
+	#else:
+		#line_2d.visible = false
+		#sprite.rotation = 0
+	health_component.take_damage(delta * 100)
 	move_and_slide()
 
 func _process(delta: float) -> void:
 	state_machine._process(delta)
+
+func get_angle_from_mouse():
+	var v = get_global_mouse_position() - global_position + Vector2(20.0, -22.0)
+	return rad_to_deg(v.angle())

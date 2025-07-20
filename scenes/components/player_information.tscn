@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://j6qsxkljrbeu"]
+
+[ext_resource type="Texture2D" uid="uid://b1rminomcnyo5" path="res://assets/ui/playerinfo.png" id="1_cxgkw"]
+[ext_resource type="PackedScene" uid="uid://dgx6lqroxutd5" path="res://scenes/components/health_bar.tscn" id="2_ttfx0"]
+
+[node name="PlayerInformation" type="NinePatchRect"]
+offset_left = 17.0
+offset_top = 15.0
+offset_right = 417.0
+offset_bottom = 135.0
+texture = ExtResource("1_cxgkw")
+
+[node name="HealthBar" parent="." instance=ExtResource("2_ttfx0")]
+position = Vector2(182, 10)
+scale = Vector2(5.365, 5.065)
