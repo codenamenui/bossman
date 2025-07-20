@@ -1,6 +1,8 @@
 extends Node
 class_name HelperFunctions
 
+var rng : RandomNumberGenerator = RandomNumberGenerator.new()
+
 func accelerate(entity: PhysicsBody2D, acceleration: float, max_speed: float, direction: float, delta: float, vertical: bool = false):
 	if vertical:
 		entity.velocity.y += acceleration * 0.5 * delta * direction

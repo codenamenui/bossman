@@ -26,6 +26,7 @@ position = Vector2(711, 74)
 
 [node name="Mage" parent="." instance=ExtResource("3_6m72w")]
 position = Vector2(193, 592)
+jump_accel_rate = 7500
 
 [node name="SmartCamera2D" type="Camera2D" parent="."]
 visible = false

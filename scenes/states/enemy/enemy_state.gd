@@ -8,12 +8,10 @@ static var enemy : Enemy
 # Static States
 static var jumping := false
 static var passing_through := false
-static var rng : RandomNumberGenerator
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("Player")
 	enemy = get_tree().get_first_node_in_group("Enemy")
-	rng = RandomNumberGenerator.new()
 	
 func enter(msg : Dictionary = {}) -> void:
 	pass
@@ -42,20 +40,24 @@ func animate_enemy():
 			return
 	
 	var state = enemy.state_machine.current_state
-	if state is AttackingState:
-		if not enemy.sprite.is_playing():
-			match rng.randi_range(1, 3):
-				1:
-					enemy.sprite.play("attack_1")
-				2:
-					enemy.sprite.play("attack_2")
-				3:
-					enemy.sprite.play("attack_3")
-	elif state is ChasingState:
+	if state is ChasingState:
 		if abs(enemy.velocity.y) < 0 and not player.is_on_floor():
 			enemy.sprite.play("fall")
 		elif abs(enemy.velocity.x) > 0 and player.is_on_floor():
 			enemy.sprite.play("run")
+	elif state is AttackingState:
+		match enemy.attack:
+			1:
+				enemy.sprite.play("attack_1")
+			2:
+				enemy.sprite.play("attack_3")
+
+func on_animation_finished():
+	var state = enemy.state_machine.current_state
+	if enemy.sprite.animation.begins_with("attack") and state is AttackingState:
+		enemy.attack = enemy.ATTACKS.NONE
+		state.has_attacked = true
+		enemy.state_machine.current_state.transition_requested.emit("Chasing")
 
 func is_on_same_level(distance: float):
 	return abs(player.global_position.y - enemy.global_position.y) <= distance
