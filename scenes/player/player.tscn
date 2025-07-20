@@ -361,7 +361,7 @@ b_accel_time = 1.5
 b_decel_rate = 3500.0
 d_max_speed = 1400.0
 a_h_max_speed = 700.0
-takeoff_velocity = -520.0
+takeoff_velocity = -720.0
 coyote_time = 0.2
 double_tap_time = 0.5
 
@@ -392,6 +392,7 @@ animation = &"run"
 frame_progress = 0.139537
 
 [node name="Line2D" type="Line2D" parent="AnimatedSprite2D"]
+visible = false
 position = Vector2(17, -6)
 points = PackedVector2Array(1000, 0, 0, 0)
 width = 1.0
@@ -477,10 +478,9 @@ color_ramp = SubResource("Gradient_h17s1")
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
 visible = false
-position = Vector2(2, -17)
+position = Vector2(27, -23)
 scale = Vector2(0.8125, 0.695312)
 color = Color(1, 0.168627, 1, 1)
-energy = 0.59
 shadow_enabled = true
 shadow_color = Color(0, 0, 0, 1)
 texture = ExtResource("9_5gtgg")

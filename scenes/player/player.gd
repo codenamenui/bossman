@@ -43,7 +43,6 @@ class_name Player
 @onready var flying_particle_system_left: CPUParticles2D = $ParticleSystems/FlyingParticleSystemLeft
 @onready var flying_particle_system_right: CPUParticles2D = $ParticleSystems/FlyingParticleSystemRight
 @onready var running_particle_system: CPUParticles2D = $ParticleSystems/RunningParticleSystem
-@onready var line_2d: Line2D = $AnimatedSprite2D/Line2D
 @onready var health_component: HealthComponent = $HealthComponent
 
 func _ready() -> void:

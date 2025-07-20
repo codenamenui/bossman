@@ -31,11 +31,13 @@ enum ATTACKS {NONE, SWING, CAST}
 @onready var state_machine: StateMachine = $StateMachine
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hurtbox: Area2D = $Hurtbox
+@onready var health_component: HealthComponent = $HealthComponent
 
 # Attack Chosen
 var attack = ATTACKS.NONE
 
 func _physics_process(delta: float) -> void:
+	health_component.take_damage(delta * 100)
 	if state_machine:
 		state_machine._physics_process(delta)
 	if attack == ATTACKS.NONE:

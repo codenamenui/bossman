@@ -109,17 +109,10 @@ func animate_player():
 			if state is IdleState:
 				current_dir = direction > 0
 				previous_dir = direction > 0
-			#player.sprite.look_at(player.get_global_mouse_position())
-			#if player.sprite.flip_h:
-				#player.sprite.rotation = clamp(player.sprite.rotation, 0, 90)
-			#else:
-				#player.sprite.rotation = clamp(player.sprite.rotation, -90, 0) * -1
-		player.line_2d.visible = true
 		if player.sprite.is_playing():
 			return
 	else:
 		player.sprite.rotation = 0
-		player.line_2d.visible = false
 		
 	player.sprite.flip_h = current_dir != 1
 	

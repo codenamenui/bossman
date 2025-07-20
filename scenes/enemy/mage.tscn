@@ -1,4 +1,4 @@
-[gd_scene load_steps=72 format=3 uid="uid://iilujs0lgumx"]
+[gd_scene load_steps=73 format=3 uid="uid://iilujs0lgumx"]
 
 [ext_resource type="Script" uid="uid://clbbx72i7nn8k" path="res://scenes/enemy/mage.gd" id="1_bmatt"]
 [ext_resource type="Texture2D" uid="uid://bvn5rj1migpvg" path="res://assets/enemy/Attack1.png" id="1_er4io"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://cn887oxb7lqdf" path="res://assets/enemy/Jump.png" id="9_l0sfw"]
 [ext_resource type="Texture2D" uid="uid://dje1jb1k1i47o" path="res://assets/enemy/Run.png" id="10_mftfy"]
 [ext_resource type="Texture2D" uid="uid://dgfiu1qu3f5rn" path="res://assets/enemy/Take hit.png" id="11_483vk"]
+[ext_resource type="PackedScene" uid="uid://dta6yp5rqtpys" path="res://scenes/components/health_component.tscn" id="15_mftfy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o10pu"]
 atlas = ExtResource("1_er4io")
@@ -451,6 +452,7 @@ height = 46.0
 collision_mask = 14
 script = ExtResource("1_bmatt")
 max_speed = 500
+jump_height = 480
 y_distance_to_jump = 100
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
@@ -473,7 +475,9 @@ metadata/_custom_type_script = "uid://behknrg8ce2ju"
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -42)
 sprite_frames = SubResource("SpriteFrames_nb2en")
-animation = &"fall"
+animation = &"attack_3"
+frame = 7
+frame_progress = 1.0
 metadata/_edit_lock_ = true
 
 [node name="Hurtbox" type="Area2D" parent="."]
@@ -488,4 +492,9 @@ position = Vector2(0, -23)
 shape = SubResource("CapsuleShape2D_l527s")
 debug_color = Color(0, 0.54855, 0.929208, 0.42)
 
+[node name="HealthComponent" parent="." instance=ExtResource("15_mftfy")]
+max_health = 100
+
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animation_finished"]
+
+[editable path="HealthComponent"]
